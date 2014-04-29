@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!-- was: <?xml version="1.0" encoding="UTF-8"?> -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    
+    <!--AQUI DEFINIMOS TODOS LOS PARAMETROS DE CONFIGURACION DE LA APLICACION 
+        PODEMOS COPIAR LOS DATOS DEL ARCHIVO hibernate.cfg.xml
+        EL PRIMER BEAN ESPECIFICA EL ARCHIVO DE PROPIEDADES-->
+    
+    <!--bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          p:location="/WEB-INF/jdbc.properties" /-->
+
+    <bean id="dataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+        p:driverClassName="com.mysql.jdbc.Driver"
+        p:url="jdbc:mysql://localhost:3306/empleados?zeroDateTimeBehavior=convertToNull"
+        p:username="root"
+        p:password="root" />
+
+    <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
+
+    <!-- DEFINIMOS EL SESSIONFACTORY QUE SERA EL ENCARGADO DE CREAR
+        Y CERRAR LAS SESION-->
+    <!-- Al configurar la conexion aqui es sencillo cambiar el proveedor de la DB-->
+    <bean id="sessionFactory"
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+        <property name="configLocation">
+            <value>WEB-INF/classes/hibernate.cfg.xml</value>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">
+                    org.hibernate.dialect.MySQLDialect
+                </prop>
+                <prop key="show_sql">
+                    true
+                </prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- GESTOR DE TRANSACCIONES - Encargado de manipular el inicio de la transaccion y los commits -->
+    <bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <!--Aqui indicamos que el elemento para manejar las transacciones es txManager y
+        que se realizaran mediante anotaciones. Lo normal seria que el destina de 
+        las trasacciones fuesen interfaces pero como no lo hemos creado asi marcamos 
+        proxy-target-class -->
+    <tx:annotation-driven transaction-manager="txManager"
+        proxy-target-class="true"/>
+    
+    <!-- DAOS -->
+    <bean id="daoEmpleado" class="com.luis.services.ManagerEmpleados">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <bean id="daoPuesto" class="com.luis.services.ManagerPuestos">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <bean id="daoConocimiento" class="com.luis.services.ManagerConocimientos">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    
+    <!-- En esta parte estamos utilizando Programacion Orientada a Aspectos, por ello debemos importar una libreria -->
+    <!--Esta solucion es antigua, antes de que hubiera anotaciones-->
+    <!--bean id="springHibernateDao" 
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ref="txManager"/>
+       <property name="target" ref="daoEmpleado"/>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+               <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+               <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+               <prop key="store*">PROPAGATION_REQUIRED</prop>
+               <prop key="update*">PROPAGATION_REQUIRED</prop>
+           </props>
+       </property>
+    </bean-->
+    
+</beans>
