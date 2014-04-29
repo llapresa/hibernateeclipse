@@ -55,8 +55,8 @@
     <bean name="empleadosController"
           class="com.luis.controllers.EmpleadosController" />
     
-    <bean name="puestosController"
-          class="com.luis.controllers.PuestosController" />
+    <!--bean name="puestosController"
+          class="com.luis.controllers.PuestosController" /-->
     
     <bean name="conocimientosController"
           class="com.luis.controllers.ConocimientosController" />

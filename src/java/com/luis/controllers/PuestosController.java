@@ -17,15 +17,35 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
-/**
- *
- * @author alumno
- */
-public class PuestosController implements Controller, BeanFactoryAware {
 
+
+@Controller
+public class PuestosController implements BeanFactoryAware{//implements Controller, BeanFactoryAware {
+
+    private ManagerPuestos dao;
+    
+    @RequestMapping(value="/puestos.htm")
+    public ModelAndView handleRequest(HttpServletRequest hsr, HttpServletResponse hsr1) throws Exception {
+        Collection<Puesto> c = dao.getAllPuesto();
+        
+        Map<String, Object> datos;
+        datos = new HashMap<>();
+        
+        datos.put("fecha", new Date());
+        datos.put("puestos", c);
+        
+        return new ModelAndView("puestos", datos);
+    }
+    
+    @Override
+    public void setBeanFactory(BeanFactory bf) throws BeansException {
+        dao = (ManagerPuestos) bf.getBean(ManagerPuestos.class);
+    }
+    /*
     private ManagerPuestos dao;
     
     @Override
@@ -45,6 +65,8 @@ public class PuestosController implements Controller, BeanFactoryAware {
     @Override
     public void setBeanFactory(BeanFactory bf) throws BeansException {
         dao = (ManagerPuestos) bf.getBean("daoPuesto");
-    }
+    }*/
+
+    
     
 }
