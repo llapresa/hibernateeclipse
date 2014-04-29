@@ -22,7 +22,8 @@
             <a href="empleados.htm" class="btn btn-success">Ver Empleados</a>
             <a href="puestos.htm" class="btn btn-success">Ver Puestos</a>
             <a href="conocimientos.htm" class="btn btn-success">Ver Conocimientos</a>
-            
+            <br>
+            <a href="altaempleado.htm" class="btn btn-success">Nuevo Empleado</a>
         </div>
         
         

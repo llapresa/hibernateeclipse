@@ -35,9 +35,9 @@ public class ManagerEmpleados extends HibernateDaoSupport{
     public void addEmpleado(Empleado em){
         Session ses = getHibernateTemplate().getSessionFactory().getCurrentSession();
         
-        ses.beginTransaction();
+        //ses.beginTransaction();
         ses.save(em);
-        ses.getTransaction().commit();
+        //ses.getTransaction().commit();
     }
     
     public void deleteEmpleado(Empleado em){
